@@ -1,4 +1,31 @@
-//your JS code here.
+// Questions dataset
+const questions = [
+  {
+    question: "What is the capital of France?",
+    choices: ["Paris", "London", "Berlin", "Rome"],
+    answer: "Paris",
+  },
+  {
+    question: "Which planet is known as the Red Planet?",
+    choices: ["Earth", "Mars", "Jupiter", "Saturn"],
+    answer: "Mars",
+  },
+  {
+    question: "Which animal is known as the King of the Jungle?",
+    choices: ["Elephant", "Tiger", "Lion", "Cheetah"],
+    answer: "Lion",
+  },
+  {
+    question: "What is the largest ocean on Earth?",
+    choices: ["Atlantic", "Indian", "Arctic", "Pacific"],
+    answer: "Pacific",
+  },
+  {
+    question: "Which gas do plants absorb from the atmosphere?",
+    choices: ["Oxygen", "Nitrogen", "Carbon Dioxide", "Hydrogen"],
+    answer: "Carbon Dioxide",
+  },
+];
 
 // Select main DOM elements
 const questionsElement = document.getElementById("questions");
@@ -14,11 +41,15 @@ function renderQuestions() {
   for (let i = 0; i < questions.length; i++) {
     const question = questions[i];
     const questionElement = document.createElement("div");
-    const questionText = document.createTextNode(`${i + 1}. ${question.question}`);
+
+    const questionText = document.createElement("p");
+    questionText.textContent = `${i + 1}. ${question.question}`;
     questionElement.appendChild(questionText);
 
     for (let j = 0; j < question.choices.length; j++) {
       const choice = question.choices[j];
+
+      const label = document.createElement("label");
       const choiceElement = document.createElement("input");
       choiceElement.setAttribute("type", "radio");
       choiceElement.setAttribute("name", `question-${i}`);
@@ -32,9 +63,9 @@ function renderQuestions() {
       // Add event listener to save progress
       choiceElement.addEventListener("change", () => saveProgress(i, choice));
 
-      const choiceText = document.createTextNode(choice);
-      questionElement.appendChild(choiceElement);
-      questionElement.appendChild(choiceText);
+      label.appendChild(choiceElement);
+      label.append(` ${choice}`);
+      questionElement.appendChild(label);
       questionElement.appendChild(document.createElement("br"));
     }
 
