@@ -93,11 +93,14 @@ submitButton.addEventListener("click", () => {
 
   // Save score to local storage
   localStorage.setItem("score", score);
+
+  // Clear progress after submit
+  sessionStorage.removeItem("progress");
 });
 
-// Show last score if available in local storage
+// Show last score ONLY if progress is not in session storage
 const storedScore = localStorage.getItem("score");
-if (storedScore !== null) {
+if (storedScore !== null && !sessionStorage.getItem("progress")) {
   scoreElement.innerText = `Your last score was: ${storedScore} out of ${questions.length}.`;
 }
 
