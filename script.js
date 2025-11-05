@@ -1,73 +1,70 @@
 const questions = [
   {
     question: "What is the capital of France?",
-    choices: ["Paris", "London", "Berlin", "Madrid"],
+    choices: ["Paris", "London", "Rome", "Berlin"],
     answer: "Paris",
   },
   {
-    question: "What is the largest planet in our solar system?",
-    choices: ["Earth", "Jupiter", "Mars", "Venus"],
-    answer: "Jupiter",
+    question: "Which language runs in a web browser?",
+    choices: ["Java", "C", "Python", "JavaScript"],
+    answer: "JavaScript",
   },
   {
-    question: "What is the boiling point of water?",
-    choices: ["100°C", "90°C", "80°C", "70°C"],
-    answer: "100°C",
+    question: "What does CSS stand for?",
+    choices: ["Central Style Sheets", "Cascading Style Sheets", "Cascading Simple Sheets", "Cars SUVs Sailboats"],
+    answer: "Cascading Style Sheets",
   },
   {
-    question: "What is the square root of 64?",
-    choices: ["6", "7", "8", "9"],
-    answer: "8",
+    question: "What year was JavaScript launched?",
+    choices: ["1996", "1995", "1994", "None of the above"],
+    answer: "1995",
   },
   {
-    question: "Who wrote 'Hamlet'?",
-    choices: ["Charles Dickens", "William Shakespeare", "Leo Tolstoy", "Mark Twain"],
-    answer: "William Shakespeare",
+    question: "What is 2 + 2 * 2?",
+    choices: ["6", "8", "4", "10"],
+    answer: "6",
   },
 ];
 
-// Load Questions
 const questionsDiv = document.getElementById("questions");
+const scoreDiv = document.getElementById("score");
+const submitButton = document.getElementById("submit");
 
-function loadQuestions() {
+function renderQuestions() {
   questionsDiv.innerHTML = "";
   const savedAnswers = JSON.parse(sessionStorage.getItem("answers")) || {};
 
   questions.forEach((q, index) => {
-    const questionWrapper = document.createElement("div");
-    questionWrapper.innerHTML = `${index + 1}. ${q.question}`;
+    const questionDiv = document.createElement("div");
+    questionDiv.textContent = `${q.question}`;
 
-    q.choices.forEach(choice => {
-      const choiceLabel = document.createElement("label");
+    q.choices.forEach((choice, i) => {
       const choiceInput = document.createElement("input");
-
       choiceInput.type = "radio";
       choiceInput.name = `question${index}`;
       choiceInput.value = choice;
-
       if (savedAnswers[`question${index}`] === choice) {
         choiceInput.checked = true;
       }
-
-      choiceInput.addEventListener("click", () => {
-        savedAnswers[`question${index}`] = choice;
-        sessionStorage.setItem("answers", JSON.stringify(savedAnswers));
-      });
-
-      choiceLabel.appendChild(choiceInput);
-      choiceLabel.appendChild(document.createTextNode(choice));
-      questionWrapper.appendChild(choiceLabel);
-      questionWrapper.appendChild(document.createElement("br"));
+      choiceInput.addEventListener("click", () =>
+        saveAnswer(index, choice)
+      );
+      questionDiv.appendChild(choiceInput);
+      questionDiv.appendChild(document.createTextNode(choice));
+      questionDiv.appendChild(document.createElement("br"));
     });
 
-    questionsDiv.appendChild(questionWrapper);
+    questionsDiv.appendChild(questionDiv);
   });
 }
 
-loadQuestions();
+function saveAnswer(index, choice) {
+  const savedAnswers = JSON.parse(sessionStorage.getItem("answers")) || {};
+  savedAnswers[`question${index}`] = choice;
+  sessionStorage.setItem("answers", JSON.stringify(savedAnswers));
+}
 
-// Submit Button Handler
-document.getElementById("submit").addEventListener("click", () => {
+submitButton.addEventListener("click", () => {
   const savedAnswers = JSON.parse(sessionStorage.getItem("answers")) || {};
   let score = 0;
 
@@ -77,6 +74,9 @@ document.getElementById("submit").addEventListener("click", () => {
     }
   });
 
-  document.getElementById("score").innerText = `Your score is ${score} out of ${questions.length}.`;
+  scoreDiv.textContent = `Your score is ${score} out of ${questions.length}.`;
   localStorage.setItem("score", score);
 });
+
+// Initial rendering
+renderQuestions();
