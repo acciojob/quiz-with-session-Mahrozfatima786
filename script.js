@@ -1,28 +1,28 @@
-const questions = [
+window.questions = [
   {
     question: "What is the capital of France?",
-    choices: ["Paris", "London", "Rome", "Berlin"],
+    choices: ["Paris", "London", "Berlin", "Rome"],
     answer: "Paris",
   },
   {
-    question: "Which language runs in a web browser?",
-    choices: ["Java", "C", "Python", "JavaScript"],
-    answer: "JavaScript",
+    question: "Which planet is known as the Red Planet?",
+    choices: ["Earth", "Mars", "Jupiter", "Saturn"],
+    answer: "Mars",
   },
   {
-    question: "What does CSS stand for?",
-    choices: ["Central Style Sheets", "Cascading Style Sheets", "Cascading Simple Sheets", "Cars SUVs Sailboats"],
-    answer: "Cascading Style Sheets",
+    question: "Which animal is known as the King of the Jungle?",
+    choices: ["Elephant", "Tiger", "Lion", "Cheetah"],
+    answer: "Lion",
   },
   {
-    question: "What year was JavaScript launched?",
-    choices: ["1996", "1995", "1994", "None of the above"],
-    answer: "1995",
+    question: "What is the largest ocean on Earth?",
+    choices: ["Atlantic", "Indian", "Arctic", "Pacific"],
+    answer: "Pacific",
   },
   {
-    question: "What is 2 + 2 * 2?",
-    choices: ["6", "8", "4", "10"],
-    answer: "6",
+    question: "Which gas do plants absorb from the atmosphere?",
+    choices: ["Oxygen", "Nitrogen", "Carbon Dioxide", "Hydrogen"],
+    answer: "Carbon Dioxide",
   },
 ];
 
@@ -34,9 +34,12 @@ function renderQuestions() {
   questionsDiv.innerHTML = "";
   const savedAnswers = JSON.parse(sessionStorage.getItem("answers")) || {};
 
-  questions.forEach((q, index) => {
+  window.questions.forEach((q, index) => {
     const questionDiv = document.createElement("div");
-    questionDiv.textContent = `${q.question}`;
+
+    const questionText = document.createElement("p");
+    questionText.textContent = q.question;
+    questionDiv.appendChild(questionText);
 
     q.choices.forEach((choice, i) => {
       const choiceInput = document.createElement("input");
@@ -46,7 +49,7 @@ function renderQuestions() {
       if (savedAnswers[`question${index}`] === choice) {
         choiceInput.checked = true;
       }
-      choiceInput.addEventListener("click", () =>
+      choiceInput.addEventListener("change", () =>
         saveAnswer(index, choice)
       );
       questionDiv.appendChild(choiceInput);
@@ -68,15 +71,15 @@ submitButton.addEventListener("click", () => {
   const savedAnswers = JSON.parse(sessionStorage.getItem("answers")) || {};
   let score = 0;
 
-  questions.forEach((q, index) => {
+  window.questions.forEach((q, index) => {
     if (savedAnswers[`question${index}`] === q.answer) {
       score++;
     }
   });
 
-  scoreDiv.textContent = `Your score is ${score} out of ${questions.length}.`;
+  scoreDiv.innerHTML = `Your score is ${score} out of ${window.questions.length}.`;
   localStorage.setItem("score", score);
 });
 
-// Initial rendering
+// Initialize
 renderQuestions();
