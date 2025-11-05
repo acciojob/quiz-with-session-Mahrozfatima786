@@ -1,108 +1,82 @@
-// Questions dataset
 const questions = [
   {
     question: "What is the capital of France?",
-    choices: ["Paris", "London", "Berlin", "Rome"],
+    choices: ["Paris", "London", "Berlin", "Madrid"],
     answer: "Paris",
   },
   {
-    question: "Which planet is known as the Red Planet?",
-    choices: ["Earth", "Mars", "Jupiter", "Saturn"],
-    answer: "Mars",
+    question: "What is the largest planet in our solar system?",
+    choices: ["Earth", "Jupiter", "Mars", "Venus"],
+    answer: "Jupiter",
   },
   {
-    question: "Which animal is known as the King of the Jungle?",
-    choices: ["Elephant", "Tiger", "Lion", "Cheetah"],
-    answer: "Lion",
+    question: "What is the boiling point of water?",
+    choices: ["100°C", "90°C", "80°C", "70°C"],
+    answer: "100°C",
   },
   {
-    question: "What is the largest ocean on Earth?",
-    choices: ["Atlantic", "Indian", "Arctic", "Pacific"],
-    answer: "Pacific",
+    question: "What is the square root of 64?",
+    choices: ["6", "7", "8", "9"],
+    answer: "8",
   },
   {
-    question: "Which gas do plants absorb from the atmosphere?",
-    choices: ["Oxygen", "Nitrogen", "Carbon Dioxide", "Hydrogen"],
-    answer: "Carbon Dioxide",
+    question: "Who wrote 'Hamlet'?",
+    choices: ["Charles Dickens", "William Shakespeare", "Leo Tolstoy", "Mark Twain"],
+    answer: "William Shakespeare",
   },
 ];
 
-// Select main DOM elements
-const questionsElement = document.getElementById("questions");
-const submitButton = document.getElementById("submit");
-const scoreElement = document.getElementById("score");
+// Load Questions
+const questionsDiv = document.getElementById("questions");
 
-// Load user answers from session storage or initialize empty
-let userAnswers = JSON.parse(sessionStorage.getItem("progress")) || {};
+function loadQuestions() {
+  questionsDiv.innerHTML = "";
+  const savedAnswers = JSON.parse(sessionStorage.getItem("answers")) || {};
 
-// Render questions dynamically
-function renderQuestions() {
-  questionsElement.innerHTML = ""; // Clear before re-rendering
-  for (let i = 0; i < questions.length; i++) {
-    const question = questions[i];
-    const questionElement = document.createElement("div");
+  questions.forEach((q, index) => {
+    const questionWrapper = document.createElement("div");
+    questionWrapper.innerHTML = `${index + 1}. ${q.question}`;
 
-    const questionText = document.createElement("p");
-    questionText.textContent = `${i + 1}. ${question.question}`;
-    questionElement.appendChild(questionText);
+    q.choices.forEach(choice => {
+      const choiceLabel = document.createElement("label");
+      const choiceInput = document.createElement("input");
 
-    for (let j = 0; j < question.choices.length; j++) {
-      const choice = question.choices[j];
+      choiceInput.type = "radio";
+      choiceInput.name = `question${index}`;
+      choiceInput.value = choice;
 
-      const label = document.createElement("label");
-      const choiceElement = document.createElement("input");
-      choiceElement.setAttribute("type", "radio");
-      choiceElement.setAttribute("name", `question-${i}`);
-      choiceElement.setAttribute("value", choice);
-
-      // Restore previous selections from session storage
-      if (userAnswers[i] === choice) {
-        choiceElement.setAttribute("checked", true);
+      if (savedAnswers[`question${index}`] === choice) {
+        choiceInput.checked = true;
       }
 
-      // Add event listener to save progress
-      choiceElement.addEventListener("change", () => saveProgress(i, choice));
+      choiceInput.addEventListener("click", () => {
+        savedAnswers[`question${index}`] = choice;
+        sessionStorage.setItem("answers", JSON.stringify(savedAnswers));
+      });
 
-      label.appendChild(choiceElement);
-      label.append(` ${choice}`);
-      questionElement.appendChild(label);
-      questionElement.appendChild(document.createElement("br"));
-    }
+      choiceLabel.appendChild(choiceInput);
+      choiceLabel.appendChild(document.createTextNode(choice));
+      questionWrapper.appendChild(choiceLabel);
+      questionWrapper.appendChild(document.createElement("br"));
+    });
 
-    questionsElement.appendChild(questionElement);
-  }
+    questionsDiv.appendChild(questionWrapper);
+  });
 }
 
-// Save progress into session storage
-function saveProgress(questionIndex, selectedChoice) {
-  userAnswers[questionIndex] = selectedChoice;
-  sessionStorage.setItem("progress", JSON.stringify(userAnswers));
-}
+loadQuestions();
 
-// Submit and calculate score
-submitButton.addEventListener("click", () => {
+// Submit Button Handler
+document.getElementById("submit").addEventListener("click", () => {
+  const savedAnswers = JSON.parse(sessionStorage.getItem("answers")) || {};
   let score = 0;
-  for (let i = 0; i < questions.length; i++) {
-    if (userAnswers[i] === questions[i].answer) {
+
+  questions.forEach((q, index) => {
+    if (savedAnswers[`question${index}`] === q.answer) {
       score++;
     }
-  }
+  });
 
-  // Display score
-  scoreElement.innerText = `Your score is ${score} out of ${questions.length}.`;
-
-  // Save score to local storage
+  document.getElementById("score").innerText = `Your score is ${score} out of ${questions.length}.`;
   localStorage.setItem("score", score);
-
-  // Clear progress after submit
-  sessionStorage.removeItem("progress");
 });
-
-// Show last score ONLY if progress is not in session storage
-const storedScore = localStorage.getItem("score");
-if (storedScore !== null && !sessionStorage.getItem("progress")) {
-  scoreElement.innerText = `Your last score was: ${storedScore} out of ${questions.length}.`;
-}
-
-// Initial render
-renderQuestions();

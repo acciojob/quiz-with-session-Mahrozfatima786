@@ -1,22 +1,23 @@
-/*  your css code here. If applicable */
 body {
   font-family: Arial, sans-serif;
-  margin: 20px;
-}
-
-h1 {
-  text-align: center;
+  padding: 20px;
 }
 
 #questions {
   margin-bottom: 20px;
 }
 
-label {
-  cursor: pointer;
+#questions div {
+  margin: 15px 0;
+}
+
+button {
+  padding: 10px 15px;
+  font-size: 16px;
 }
 
 #score {
   margin-top: 20px;
+  font-size: 18px;
   font-weight: bold;
 }
